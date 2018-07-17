@@ -1,0 +1,68 @@
+package Table_v1;
+
+import java.io.*;
+import javax.swing.*;
+import javax.swing.table.*;
+
+
+public class Jayme extends JFrame{
+      private JTable tb1;
+      private JScrollPane jScrollPane;
+      
+      private JPanel jPanel1;
+    
+
+      public Jayme() {
+    	  
+    	  jPanel1 = new JPanel();
+    	  jScrollPane = new JScrollPane();
+
+    	  // making a dummy table and add it to one of the panels
+    	  String [] head = {};
+		  Object [][] data = {};
+		  DefaultTableModel tableModel = new DefaultTableModel(data,head);
+		  tb1 = new JTable(tableModel);  
+    	  jScrollPane = new JScrollPane(tb1);
+          jPanel1.add(jScrollPane);
+          this.add(jPanel1);
+    		
+          // initial setting 
+    	  this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    	  this.setBounds(100,100,1000,1000);
+    	  this.setVisible(true);
+    	  
+    	  // testing the csvToTable method
+    	  csvToTable("csci100n - Grades.csv",tb1);
+      }
+      
+      public void csvToTable(String fn, JTable tb1) {
+    	  try{
+    	  BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(new File(fn))));
+		  String line;
+		  line = bf.readLine();
+		  String [] head = line.split(",");
+		  Object [][] data = {};
+		  //String[] dataType =new String[head.length];
+		  DefaultTableModel tableModel = new DefaultTableModel(data,head);
+		  while((line = bf.readLine()) != null)
+			  tableModel.addRow(line.split(","));
+		  tb1.setModel(tableModel);
+
+			  
+    	  }catch(Exception e){
+    		  e.printStackTrace();
+    	  }
+
+    	  
+    	  
+    	  
+    	  
+    	  
+      }
+      
+      public static void main(String[] args) { 
+    	  Jayme myApp = new Jayme(); 
+    	  myApp.setVisible(true);
+    	  
+      } 
+}
