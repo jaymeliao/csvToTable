@@ -1,0 +1,284 @@
+
+public class Jayme extends JFrame{
+	private JTable tb1;	
+	private DefaultTableModel tbm1;
+	private JScrollPane jScrollPane;
+      
+	private JPanel jPanel1;
+	JButton bt;
+	JButton bt1;
+    
+
+	public Jayme() {
+    	  
+    	  jPanel1 = new JPanel();
+    	  jScrollPane = new JScrollPane();
+
+    	  // making a dummy table and add it to one of the panels
+    	  String [] head = {};
+		  Object [][] data = {};
+		  tbm1 = new DefaultTableModel(data,head);
+		  tb1 = new JTable(tbm1);  
+    	  jScrollPane = new JScrollPane(tb1);
+          jPanel1.add(jScrollPane);
+          this.add(jPanel1);
+    		
+          // initial setting 
+    	  this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    	  this.setBounds(100,100,1000,1000);
+    	  this.setVisible(true);
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  JButton bt = new JButton("Save");
+    	  bt.setBounds(50,100,95,30);
+    	  bt.addActionListener( new ActionListener() {
+    	  	public void actionPerformed(ActionEvent e)
+    	  	{
+    	  		
+    	  		
+    	  		updateFromTable(tb1,"1.csv");
+    	  		
+    	  		
+    	  		
+    	  		
+    	  		
+    	  	}
+    	  });
+    	  jPanel1.add(bt);
+
+    	  
+    	  
+    	  JButton bt1 = new JButton("As1");
+    	  bt1.setBounds(50,100,95,30);
+    	  bt1.addActionListener( new ActionListener() {
+    	  	public void actionPerformed(ActionEvent e)
+    	  	{
+    	  		
+    	  		
+
+    	  		showAssignment(tb1,"123");
+    	  
+    	  		
+    	  		
+    	  		
+    	  		
+    	  	}
+    	  });
+    	  jPanel1.add(bt1);
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  
+    	  // testing the csvToTable method
+    	 csvToTable("1.csv",tb1);
+    	 //System.out.println(find(tb1,"55555@gmail.com",5)); 
+      }
+      
+      //   void showAssignment(Jtable tb, String fn, String aCode, String emailA, int emailIndex)
+      void showAssignment(JTable tb, String aCode ) {
+    	  // add an emty column to tb
+          //tb.getColumnModel().addColumn(aColumn);
+          
+    	  //TableColumn c = new TableColumn();
+          //c.setHeaderValue("Fle");
+          //tb.getColumnModel().addColumn(c);
+    	  
+    	  
+    	  //DefaultTableModel x = (DefaultTableModel)tb.getModel();
+    	 
+    	  DefaultTableModel tbm = (DefaultTableModel)tb1.getModel();
+    	  
+    	  String[] col = new String[tb.getRowCount()];
+    	  for (int i=0;i<tbm.getRowCount();i++)
+    		  col[i] = "N/A";
+    	  tbm.addColumn("Files",col);
+    	  tb.setModel(tbm);
+          
+    	
+          
+    	 // step 1!: get the list of all emails of those who submitted
+    
+    	  File efolder = new File("./"+aCode);
+    	// you go to the assigment folder (which has the same name as aCode) and get the array of all folders (= emil addresses)
+    	  File[] listOfeFiles = efolder.listFiles();
+    	 String em= "";
+    	 // step 2, iterte over ll email addresses
+    	  for (File efile : listOfeFiles) {
+              //        System.out.println(file.getName());
+              
+    		  em=efile.getName();	
+    		  
+    		
+    		  File folder = new File("./"+aCode+"/"+em);
+              File[] listOfFiles = folder.listFiles();
+              String a = "";
+              for (File file : listOfFiles) {
+              //        System.out.println(file.getName());
+              
+            	  a+=file.getName()+"\n";
+              }
+              
+            // System.out.print(a);
+              
+             
+              
+             int x= find(tb1,em,5); //return row index 
+             if(x!=-1) {
+             int y=tb.getColumnCount()-1;
+             tb.setValueAt(a,x,y);
+             } 
+          
+   
+        	 
+  	}
+    	  
+          
+	 
+	  }
+	 
+
+      public void updateFromTable(JTable tb, String fn) { 
+    	  
+    	  String fileLine="";
+    	  try {
+  		
+  			FileWriter f = new FileWriter(fn);
+  			BufferedWriter bf = new BufferedWriter(f);
+
+  		   // generating column line
+  			for (int c=0;c<tb.getColumnCount();c++)
+  				fileLine += tb.getColumnName(c) + ",";
+  			fileLine=fileLine.substring(0,fileLine.length()-1);
+			bf.write(fileLine);
+  			bf.newLine();
+ 
+  			
+  			
+  			// iterate over the table and generate other lines
+  			
+  			
+  			for (int i = 0; i < tb.getRowCount();  i++) {
+  				fileLine="";
+  				for (int j = 0; j < tb.getColumnCount(); j++) {
+  					fileLine += tb.getValueAt(i, j) + ",";
+  					
+  					
+  					
+  					
+  				}
+  				fileLine=fileLine.substring(0,fileLine.length()-1);
+  				bf.write(fileLine);
+  				//System.out.println(fileLine);
+  				bf.newLine();
+  			}
+
+  			bf.close();
+  			f.close();
+  			JOptionPane.showMessageDialog(this, "Saved successfully");
+
+  		} catch (IOException e1) {
+  			JOptionPane.showMessageDialog(this, "Cannot save!");
+  		}
+  	}
+
+      
+      
+      // a method to find a student by his/her email
+      
+      int find(JTable tb, String emailA, int emailIndex ) {
+    	  
+    	  
+         for (int i = 0; i<tb.getRowCount();i++) {
+        	 
+        	 
+        	 if(emailA.equals(tb.getValueAt(i, emailIndex))) { 
+        		 return i;
+        	 }
+        	 
+        	 
+        	 
+        	 
+        	 
+        	 
+         } 
+         
+         return -1;
+    	 
+    
+    	  
+    	  
+      } // return the row number of that student 
+      
+      
+      
+      /*
+      public void tableToCSV(JTable tb, String fn) { 
+    	  
+    	  String dummy = "";
+    	  String csvLine = "";//row
+    	  
+    	  // make the first row of the csv 
+    	  for (int c=0;c<tb.getColumnCount();c++)
+    		  csvLine += tb.getColumnName(c) + ",";
+    	  csvLine=csvLine.substring(0,csvLine.length()-1);
+		  dummy += csvLine + "\n";
+    	
+    	  // iterate over the rows, and make a comma separated string for each row
+    	  
+    	  
+    	  
+    	  for (int r=0; r < tb.getRowCount(); r++) {
+    		  csvLine="";
+    		  for (int c=0;c<tb.getColumnCount();c++) {
+    			  csvLine += tb.getValueAt(r, c) + ",";
+    		  }
+    		  // get rid of the last character of csvLine
+    		  csvLine=csvLine.substring(0,csvLine.length()-1);
+    		  dummy += csvLine + "\n";
+    	  }
+		  JOptionPane.showMessageDialog(null,dummy,"hello",JOptionPane.PLAIN_MESSAGE);
+    	  
+    	
+    	  
+    	  
+      }
+      */
+      
+      
+      
+      public void csvToTable(String fn, JTable tb1) {
+    	  try{
+    	  BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(new File(fn))));
+		  String line;
+		  line = bf.readLine();
+		  String [] head = line.split(",");
+		  Object [][] data = {};
+		  //String[] dataType =new String[head.length];
+		  DefaultTableModel tableModel = new DefaultTableModel(data,head);
+		  while((line = bf.readLine()) != null)
+			  tableModel.addRow(line.split(","));
+		  tb1.setModel(tableModel);
+
+			  
+    	  }catch(Exception e){
+    		  e.printStackTrace();
+    	  }
+
+      }
+      
+      public static void main(String[] args) { 
+    	  Jayme myApp = new Jayme(); 
+    	  myApp.setVisible(true);
+    	  
+      } 
+}
